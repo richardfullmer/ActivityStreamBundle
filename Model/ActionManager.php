@@ -3,7 +3,6 @@
 namespace Redpanda\Bundle\ActivityStreamBundle\Model;
 
 use Redpanda\Bundle\ActivityStreamBundle\Streamable\StreamableInterface;
-
 use Symfony\Component\Security\Core\SecurityContext;
 
 /**
@@ -11,8 +10,14 @@ use Symfony\Component\Security\Core\SecurityContext;
  */
 abstract class ActionManager implements ActionManagerInterface
 {
+    /**
+     * @var \Symfony\Component\Security\Core\SecurityContext
+     */
     protected $securityContext;
-    
+
+    /**
+     * @param \Symfony\Component\Security\Core\SecurityContext $securityContext
+     */
     public function __construct(SecurityContext $securityContext)
     {
         $this->securityContext = $securityContext;
@@ -31,16 +36,19 @@ abstract class ActionManager implements ActionManagerInterface
         return $action;
     }
     
-    public function findStreamByActor($actor)
+    public function findStreamByActor(StreamableInterface $actor)
     {
-        return $this->findStreamBy(array('actorId' => $actor->getId()));
+        return $this->findStreamBy(array(
+            'actorId' => $actor->getId(),
+            'actorType' => get_class($actor)
+        ));
     }
     
-    public function findStreamByTarget($target)
+    public function findStreamByTarget(StreamableInterface $target)
     {
         return $this->findStreamBy(array(
             'targetId'   => $target->getId(),
-            'targetType' => get_class($target),
+            'targetType' => get_class($target)
         ));
     }
     

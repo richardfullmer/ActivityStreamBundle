@@ -1,8 +1,11 @@
 <?php
 namespace Redpanda\Bundle\ActivityStreamBundle\Doctrine\Event;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Redpanda\Bundle\ActivityStreamBundle\Model\ActionManagerInterface;
 use Redpanda\Bundle\ActivityStreamBundle\Streamable\Resolver\ResolverInterface;
+use Redpanda\Bundle\ActivityStreamBundle\Events;
+use Redpanda\Bundle\ActivityStreamBundle\Event\ActionEvent;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
@@ -14,11 +17,17 @@ class ActionSubscriber
     protected $streamableResolver;
 
     /**
+     * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+     */
+    protected $dispatcher;
+
+    /**
      * @param \Redpanda\Bundle\ActivityStreamBundle\Streamable\Resolver\ResolverInterface $streamableResolver
      */
-    public function __construct(ResolverInterface $streamableResolver)
+    public function __construct(ResolverInterface $streamableResolver, EventDispatcherInterface $dispatcher)
     {
         $this->streamableResolver = $streamableResolver;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -56,6 +65,21 @@ class ActionSubscriber
                     $action, $this->streamableResolver->resolve($eventArgs, $action->getActionObjectType(), $action->getActionObjectId())
                 );
             }
+        }
+    }
+
+    /**
+     * @param \Doctrine\ORM\Event\LifecycleEventArgs $eventArgs
+     */
+    public function postPersist(LifecycleEventArgs $eventArgs)
+    {
+        $action = $eventArgs->getEntity();
+        $className = get_class($action);
+        $em = $eventArgs->getEntityManager();
+        $metadata = $em->getClassMetadata($className);
+
+        if ($metadata->reflClass->implementsInterface('Redpanda\Bundle\ActivityStreamBundle\Model\ActionInterface')) {
+            $this->dispatcher->dispatch(Events::onAction, new ActionEvent($action));
         }
     }
 }

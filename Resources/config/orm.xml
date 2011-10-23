@@ -20,7 +20,9 @@
         
         <service id="activity_stream.doctrine.action_subscriber" class="%activity_stream.doctrine.action_subscriber.class%">
             <tag name="doctrine.event_listener" event="postLoad" />
+            <tag name="doctrine.event_listener" event="postPersist" />
             <argument type="service" id="activity_stream.resolver.chain" />
+            <argument type="service" id="event_dispatcher" />
         </service>
 
         <service id="activity_stream.doctrine.entity_resolver" class="%activity_stream.doctrine.entity_resolver.class%">

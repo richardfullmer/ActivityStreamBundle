@@ -37,7 +37,7 @@ class ActionManager extends BaseActionManager
      */
     public function findOneStreamBy(array $criteria)
     {
-        $val = $this->repository->findOneBy($criteria);
+        return $this->repository->findOneBy($criteria);
     }
     
     /**

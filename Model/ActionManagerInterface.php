@@ -2,6 +2,7 @@
 namespace Redpanda\Bundle\ActivityStreamBundle\Model;
 
 use Redpanda\Bundle\ActivityStreamBundle\Model\ActionInterface;
+use Redpanda\Bundle\ActivityStreamBundle\Streamable\StreamableInterface;
 use FOS\UserBundle\Model\UserInterface;
 
 interface ActionManagerInterface
@@ -10,9 +11,9 @@ interface ActionManagerInterface
     
     function findStreamBy(array $criteria);
     
-    function findStreamByActor($actor);
+    function findStreamByActor(StreamableInterface $actor);
     
-    function findStreamByTarget($target);
+    function findStreamByTarget(StreamableInterface $target);
 
     function updateAction(ActionInterface $action);
     
