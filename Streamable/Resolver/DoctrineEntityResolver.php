@@ -40,6 +40,11 @@ class DoctrineEntityResolver implements ResolverInterface
      */
     public function resolve(LifecycleEventArgs $eventArgs, $type, $id)
     {
+        $proxyClass = new \ReflectionClass($type);
+        if ($proxyClass->implementsInterface('Doctrine\ORM\Proxy\Proxy')) {
+            $type = $proxyClass->getParentClass()->getName();
+        }
+        
         return $eventArgs->getEntityManager()->getReference($type, $id);
     }
 
