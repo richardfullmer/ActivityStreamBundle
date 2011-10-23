@@ -127,14 +127,7 @@ abstract class Action implements ActionInterface
     public function setActor($actor)
     {
         $this->actorId = $actor->getId();
-
-        $type = get_class($actor);
-        $proxyClass = new \ReflectionClass($type);
-        if ($proxyClass->implementsInterface('Doctrine\ORM\Proxy\Proxy')) {
-            $type = $proxyClass->getParentClass()->getName();
-        }
-
-        $this->actorType = $type;
+        $this->actorType = get_class($actor);
         $this->actor = $actor;
     }
 
@@ -156,14 +149,7 @@ abstract class Action implements ActionInterface
     public function setTarget($target)
     {
         $this->targetId = $target->getId();
-
-        $type = get_class($target);
-        $proxyClass = new \ReflectionClass($type);
-        if ($proxyClass->implementsInterface('Doctrine\ORM\Proxy\Proxy')) {
-            $type = $proxyClass->getParentClass()->getName();
-        }
-
-        $this->targetType = $type;
+        $this->targetType = get_class($target);
         $this->target = $target;
     }
     
@@ -180,14 +166,7 @@ abstract class Action implements ActionInterface
     public function setActionObject($actionObject)
     {
         $this->actionObjectId = $actionObject->getId();
-
-        $type = get_class($actionObject);
-        $proxyClass = new \ReflectionClass($type);
-        if ($proxyClass->implementsInterface('Doctrine\ORM\Proxy\Proxy')) {
-            $type = $proxyClass->getParentClass()->getName();
-        }
-
-        $this->actionObjectType = $type;
+        $this->actionObjectType = get_class($actionObject);
         $this->actionObject = $actionObject;
     }
     
